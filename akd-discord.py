@@ -42,9 +42,9 @@ class DiscordManager(discord.Client):
 
         await self.wait_until_ready()
     
-    async def getSetting(self, setting):
+    def getSetting(self, setting):
         """
         Return live setting from settingsManager for specified setting.
         """
         
-        return self.main.settingsManager.settings[setting]
+        return self.main.settingsManager.getSetting(setting)

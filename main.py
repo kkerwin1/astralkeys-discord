@@ -6,6 +6,7 @@ from akd-discord import DiscordManager
 from akd-gui import GuiManager
 from akd-files import FileManager
 from akd-settings import SettingsManager
+from akd-data import DataManager
 
 class Main(self):
     """
@@ -19,18 +20,20 @@ class Main(self):
 
         self.guiManager         = GuiManager(self)
         self.fileManager        = FileManager(self)
+        self.dataManager        = DataManager(self)
         self.settingsManager    = SettingsManager(self)
         self.discordManager     = DiscordManager(self)
             
-    def run(self):
+    def start(self):
         """
         Start it
         """
 
-        self.guiManager.run()
-        self.fileManager.run()
-        self.settingsManager.run()
-        self.discordManager.run()
+        self.guiManager.start()
+        self.fileManager.start()
+        self.
+        self.settingsManager.start()
+        self.discordManager.start()
     
     def stop(self):
         """
@@ -42,5 +45,8 @@ class Main(self):
         self.fileManager.stop()
         self.guiManager.stop()
 
-main = Main()
-main.run()
+try:
+    main = Main()
+    main.run()
+except:
+    main.stop()
