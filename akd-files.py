@@ -1,10 +1,14 @@
+import difflib
+
 class FileManager:
     def __init__(self, main):
         self.main               = main
         self.settingsManager    = self.main.settingsManager
-        self.settingsFile       = ""
+        self.settingsText       = ""
+        self.oldhash_settings   = 0
         self.uri_astralKeysFile = ""
         self.astralKeysFile     = ""
+        self.oldhash_astralkeys = 0
 
     def getSetting(self, setting):
         """
@@ -29,22 +33,13 @@ class FileManager:
         Open the data file.
         """
 
-        await self.astralKeysFile = open(self.uri_astralKeysFile)
-    
-    async def close_astralKeysFile(self):
-        """
-        Close the data file. We won't write to it.
-        """
-
-        await self.astralKeysFile.close()
-    
-    def reload_astralKeysFile(self):
-        """
-        Reload the data file.
-        """
-
-        self.close_astralKeysFile()
-        self.open_astralKeysFile()
+        await _file = open(self.uri_astralKeysFile)
+        text = _file.read()
+        new_hash = hashFunc(text)
+        if new_hash is not self.oldhash_astralkeys:
+            self.astralKeysText = text
+            self.oldhash_astralkeys = new_hash
+        await _file.close()
 
     def firstLoad_astralKeysFile(self):
         """
@@ -59,11 +54,17 @@ class FileManager:
     # --------
 
     async def open_settings(self):
-        await self.settingsFile = open("file/settings.json")
+        await _file = open("file/settings.json")
+        text = _file.read()
+        new_hash = hashFunc(text)
+        if new_hash is not self.oldhash_settings:
+            self.settingsText = text
+            self.oldhash_settings = new_hash
+        await _file.close()
 
     async def save_settings(self):
         await self.settingsManager.generateBuffer()
-        await self.settingsFile.write(self.settingsManager.buffer)
+        await _file = open("file/settings.json")
     
     async def close_settings(self):
         self.save_settings()
@@ -80,5 +81,4 @@ class FileManager:
         self.firstLoad_astralKeysFile()
     
     async def stop(self):
-        self.close_astralKeysFile()
         self.close_settings()

@@ -1,12 +1,14 @@
 # requires:
 #   python >= 3.5.3
 #   discord.py; cf. https://discordpy.readthedocs.io/
+#   PyGithub; cf. github.com/PyGithub/PyGithub
 
 from akd-discord import DiscordManager
 from akd-gui import GuiManager
 from akd-files import FileManager
 from akd-settings import SettingsManager
 from akd-data import DataManager
+from akd-errors import ErrorManager
 
 class Main(self):
     """
@@ -18,6 +20,7 @@ class Main(self):
         Structure
         """
 
+        self.errorManager       = ErrorManager(self)
         self.guiManager         = GuiManager(self)
         self.fileManager        = FileManager(self)
         self.dataManager        = DataManager(self)
@@ -29,9 +32,10 @@ class Main(self):
         Start it
         """
 
+        self.errorManager.start()
         self.guiManager.start()
         self.fileManager.start()
-        self.
+        self.dataManager.start()
         self.settingsManager.start()
         self.discordManager.start()
     
@@ -42,11 +46,13 @@ class Main(self):
 
         self.discordManager.stop()
         self.settingsManager.stop()
+        self.dataManager.stop()
         self.fileManager.stop()
         self.guiManager.stop()
+        self.errorManager.stop()
 
 try:
     main = Main()
-    main.run()
+    main.start()
 except:
     main.stop()
