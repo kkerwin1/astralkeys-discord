@@ -3,12 +3,15 @@
 #   discord.py; cf. https://discordpy.readthedocs.io/
 #   PyGithub; cf. github.com/PyGithub/PyGithub
 
-from akd-discord import DiscordManager
-from akd-gui import GuiManager
-from akd-files import FileManager
-from akd-settings import SettingsManager
-from akd-data import DataManager
-from akd-errors import ErrorManager
+from lib.akd-discord import DiscordManager
+from lib.akd-gui import GuiManager
+from lib.akd-files import FileManager
+from lib.akd-settings import SettingsManager
+from lib.akd-data import DataManager
+from lib.akd-errors import ErrorManager
+from lib.akd-github import GithubManager
+
+import traceback, sys, os
 
 class Main(self):
     """
@@ -50,9 +53,23 @@ class Main(self):
         self.fileManager.stop()
         self.guiManager.stop()
         self.errorManager.stop()
+    
+    def raiseError(self, traceback):
+        """
+        Send a traceback report to ErrorManager, GuiManager, and ultimately GitHub
+        for creation of an issue when an error is found.
+        """
 
-try:
-    main = Main()
-    main.start()
-except:
-    main.stop()
+        self.errorManager(traceback)
+
+def main():
+    _main = Main()
+    try: 
+        _main.start()
+    except ApplicationClose:
+        _main.stop()
+    except:
+        _main.raiseError(traceback)
+
+if __name__ is __main__:
+    main()
