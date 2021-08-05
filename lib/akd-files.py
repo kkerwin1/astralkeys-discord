@@ -16,18 +16,19 @@ class FileManager:
         """
 
         return self.settingsManager.getSetting(setting)
-    
+
     # ----------
     # AstralKeys
     # ----------
-    
+
     def getAstralKeysURI(self):
         """
-        Get the location (URI) of the Astral Keys data file from the settingsManager.
+        Get the location (URI) of the Astral Keys data file from the
+        settingsManager.
         """
 
         self.uri_astralKeysFile = self.getSetting("astral_keys_file_uri")
-    
+
     async def open_astralKeysFile(self):
         """
         Open the data file.
@@ -48,12 +49,29 @@ class FileManager:
 
         self.getAstralKeysURI()
         self.open_astralKeysFile()
-    
+
     # --------
     # Settings
     # --------
 
-    async def open_settings(self):
+    async def firstLoad_settings(self):
+        """
+        Load the settings file text for the first time.
+        """
+
+        await _file = open("file/settings.json")
+        text = file.read()
+        await file.close()
+        self.settingsText = settingsText
+        hash = hasFunc(text)
+        self.oldHash_settings = hash
+        return text
+
+    async def _update_settings(self):
+        """
+        Update settings from hard disk.
+        """
+
         await _file = open("file/settings.json")
         text = _file.read()
         new_hash = hashFunc(text)
@@ -63,22 +81,42 @@ class FileManager:
         await _file.close()
 
     async def save_settings(self):
+        """
+        Save settings to hard disk.
+        """
+
         await self.settingsManager.generateBuffer()
         await _file = open("file/settings.json")
-    
+
     async def close_settings(self):
+        """
+        Close the settings file.
+        """
+
         self.save_settings()
         await self.settingsFile.close()
-    
+
     async def reload_settings(self):
+        """
+        Close and re-open the settins file.
+        """
+
         self.close_settings()
         self.open_settings()
-    
+
 
     # Start/Stop
     async def start(self):
-        self.open_settings()
+        """
+        Start fileManager.
+        """
+
+        self.settingsManager.firstLoad_settings()
         self.firstLoad_astralKeysFile()
-    
+
     async def stop(self):
+        """
+        Stop fileManager.
+        """
+        
         self.close_settings()
